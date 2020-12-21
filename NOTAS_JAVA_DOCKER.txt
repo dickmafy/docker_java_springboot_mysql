@@ -1,0 +1,254 @@
+Lourdes Bringas Fernandez - EMP.PROV. - MANPOWER <lourdesbringas@bcp.com.pe>
+para:	"Valery Stefanny Graham Balarezo - EMP.PROV. - MANPOWER" <valerygraham@bcp.com.pe>,
+"diego.matos.b@gmail.com" <diego.matos.b@gmail.com>,
+Johan Flores Effio <sflores@bcp.com.pe>
+
+Consideraciones técnicas:
+
+El lenguaje de programación a utilizar es Java con el framework Spring Boot.
+Utilizar programación reactiva RxJava
+
+Funcionalidades Requeridas:
+Se debe crear una API para aplicar un tipo de cambio a un monto.
+
+La API debe recibir el valor “monto“, “moneda origen”, “moneda destino“ y devolver el “monto”, “monto con tipo de cambio”, “moneda origen”, “moneda destino“  y “tipo de cambio”.
+
+Se debe crear la información del tipo de cambio en una in memory database, por ejemplo H2.
+Dockerizar el JAR e invocar a la API desde el contenedor. (Windows o CentOS)
+
+El uso de la API debe ser mostrada desde Postman.
+
+Funcionalidades Opcionales:
+Implementar un nivel de seguridad en la consulta (JWT).
+Crear un POST para actualizar el valor del tipo de cambio.
+Implementar un front con angular que consuma la API.
+
+Consideraciones:
+La elección de la Imagen – al dockerizar – es libre.
+No hay un standard en los nombres de los objetos creados.
+En caso de alguna duda en el enunciado, tomar una decisión y luego sustentarla durante la entrevista.
+
+--------
+String respuesta = objectMapper.writeValueAsString(new AddBookWebRequest());
+System.out.println(respuesta);
+
+{
+	"id":"1",
+	"title":"titulo1",
+	"authorName":"autor"
+}
+private String id;
+    private String title;
+    private String authorName;
+	
+	
+----------
+#http://localhost:8081/api/books
+
+
+{
+    "errorCode": null,
+    "data": [
+        {
+            "id": "1",
+            "title": "libro1",
+            "authorName": "pablo"
+        }
+    ]
+}
+	
+-------------
+#TIPOCAMBIO	API
+
+tipocambio/
+
+#request
+{
+	"monto":"10",
+	"monedaori":"sol",
+	"monedades":"dolar"
+}	
+#response
+{
+    "monto":"10",
+	"monedaori":"sol",
+	"monedades":"dolar",
+    "respuesta":"30.60"
+}
+
+---------------
+
+<beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<beans:property name="url"
+			value="jdbc:mysql://localhost:3306/test?serverTimezone=UTC" />
+		<beans:property name="username" value="root" />
+		<beans:property name="password" value="" />
+		
+		
+	</beans:bean>
+
+	<!-- Hibernate 4 SessionFactory Bean definition -->
+	<beans:bean id="hibernate4AnnotatedSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="annotatedClasses">
+			<beans:list>
+				<beans:value>com.journaldev.spring.model.Person</beans:value>
+				<beans:value>com.journaldev.spring.model.Equipo</beans:value>
+				<beans:value>com.journaldev.spring.model.Rol</beans:value>
+				<beans:value>com.journaldev.spring.model.User</beans:value>
+				<beans:value>com.journaldev.spring.model.Producto</beans:value>
+				<beans:value>com.journaldev.spring.model.Alumno</beans:value>
+				<beans:value>com.journaldev.spring.model.Pelicula</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="hibernateProperties">
+			<beans:props>
+				<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</beans:prop>
+				<beans:prop key="hibernate.show_sql">false</beans:prop>
+				<!-- validate | update | create | create-drop -->
+				<beans:prop key="hibernate.hbm2ddl.auto">none</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+    
+    
+
+----------------
+#Creamos la Imagen Docker
+docker build -t demo-nica .
+docker build -t demobcp .
+
+docker images
+
+sudo docker pull mysql:5.7
+
+docker run --name mysql-standalone -e MYSQL_ROOT_PASSWORD=sa -e MYSQL_DATABASE=jugnicaragua -e MYSQL_USER=sa -e MYSQL_PASSWORD=sa -d mysql:5.7
+
+docker container logs mysql-standalone
+docker exec -it mysql-standalone bash -l
+mysql -usa -psa
+show databases
+
+
+#Desplegar contenedor de la aplicacion
+mvn clean package
+mvn compile
+mvn install
+docker run -d -p 8089:8089 --name demo-nica --link mysql-standalone:mysql demo-nica
+docker run -d -p 8089:8089 --name demobcp --link mysql-standalone:mysql demobcp
+
+docker container logs demo-nica
+docker rm -vf $(docker ps -a -q)
+docker rmi -f $(docker images -a -q)
+
+
+
+
+
+----------------------
+
+https://www.javanicaragua.org/2020/03/29/aplicacion-de-spring-boot-con-mysql-y-docker/
+
+
+1ec620a85061   mysql:5.7   "docker-entrypoint.s…"   16 minutes ago       Up 16 minutes       3306/tcp, 33060/tcp   mysql-standalone
+
+λ docker ps -a
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS                      PORTS                    NAMES
+407c2deeef7c   redis                    "docker-entrypoint.s…"   2 minutes ago    Up 2 minutes                6379/tcp                 gallant_franklin
+d61b681bdf6d   redis                    "docker-entrypoint.s…"   2 minutes ago    Up 2 minutes                6379/tcp                 vigilant_mendel
+1ec620a85061   mysql:5.7                "docker-entrypoint.s…"   18 minutes ago   Exited (0) 23 seconds ago                            mysql-standalone
+aaca6e23bf48   getting-started          "docker-entrypoint.s…"   10 days ago      Created                                              hungry_mclean
+f7d91851111a   getting-started          "docker-entrypoint.s…"   10 days ago      Exited (255) 10 days ago    0.0.0.0:3000->3000/tcp   brave_lumiere
+ec98434d2045   docker/getting-started   "/docker-entrypoint.…"   10 days ago      Created                                              romantic_meitner
+3e56d4e3f4e5   docker/getting-started   "/docker-entrypoint.…"   10 days ago      Exited (0) 10 days ago                               stupefied_goldwasser
+
+
+C:\Users\pcdiego\Desktop\docker_java\articles-master\articles-master\jugnicaragua
+λ docker images
+REPOSITORY               TAG       IMAGE ID       CREATED          SIZE
+demo-nica                latest    0d3c44d380a0   31 seconds ago   667MB
+getting-started          latest    817282619ba9   10 days ago      180MB
+docker/getting-started   latest    021a1b85e641   11 days ago      27.6MB
+
+docker run -d -p 8089:8089 --name demo-nica --link mysql-standalone:mysql demo-nica
+
+1) mvn clean package
+2) mvn compile
+3) mvn install
+4) docker run -d -p 8089:8089 --name demo-nica --link mysql-standalone:mysql demo-nica
+docker run -d -p 8089:8089 --name demobcp --link mysql-standalone:mysql demobcp
+
+################## RE DEPLOYEAR 
+DEPLOY
+ELIMINAR 
+CONTENEDOR 
+Imagen
+
+BUILD INSTAL tu aplicativo
+
+docker build -t demo-nica .
+ 
+docker run -d -p 8089:8089 --name demo-nica --link mysql-standalone:mysql demo-nica
+
+
+
+
+
+
+
+#########JAVA
+/*
+	 {
+	 	"id" : 1
+	    "monto":"10",
+		"monedaori":"sol",
+		"monedades":"dolar",
+		"tipocam" : 3.50
+	    "respuesta":"30.60"
+	}
+	*/
+  
+	private Integer id=1;
+	private Double monto=10.0;
+	private String monedaori="Sol";
+	private String monedades ="Dolar";
+	private double tipocam=3.50;
+	private Double respuesta=monto*tipocam;
+
+#JSON TO SAVE - TIPO DE CAMBIO
+
+ {
+	    "monto":"100",
+		"monedaori":"sol",
+		"monedades":"dolar",
+		"tipocam" : 3.50
+	    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+    

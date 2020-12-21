@@ -1,0 +1,93 @@
+{
+	"variables": [],
+	"info": {
+		"name": "JAVA_DOCKER_SPRING_TIPO_CAMBIO",
+		"_postman_id": "f17a2124-f83e-bddb-a879-e6a335c01ad1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "LIST VERSION",
+			"request": {
+				"url": "http://localhost:8089/tc/version",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "LIST DOCKER",
+			"request": {
+				"url": "http://localhost:8089/tc/listAll",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "CALCULAR",
+			"request": {
+				"url": "http://localhost:8089/tc/calcular",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n\t    \"monto\":\"100\",\r\n\t\t\"monedaori\":\"sol\",\r\n\t\t\"monedades\":\"dolar\",\r\n\t\t\"tipocam\" : 3.50\r\n\t    \r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "EDITAR",
+			"request": {
+				"url": "http://localhost:8089/tc/update",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n \t\t\"id\" : \"8\",\r\n\t    \"monto\":\"100\",\r\n\t\t\"monedaori\":\"sol\",\r\n\t\t\"monedades\":\"dolar\",\r\n\t\t\"tipocam\" : 3.5,\r\n\t    \"respuesta\":351.0\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"url": "http://localhost:8089/tc/delete",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"5\"\n\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
